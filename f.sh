@@ -3,7 +3,8 @@
 # Dec 16, 2019
 
 # Include definitions
-source defs.sh
+script_folder="$(dirname "$0")"
+source "$script_folder/defs.sh"
 
 # Main function
 function f() {
@@ -49,7 +50,7 @@ function folder() {
     found=false
     for i in {1..$F_MAX_DEPTH}
     do
-      found_folder=`find $1 -iname "*$2*" -type d -F_MAX_DEPTH $i 2> /dev/null | sort | head -1`
+      found_folder=`find $1 -iname "*$2*" -type d -maxdepth $i 2> /dev/null | sort | head -1`
       if [ ! -z $found_folder ]; then
         echo $found_folder
         found=true
