@@ -3,16 +3,15 @@
 # Dec 16, 2019
 
 # Include definitions
-script_folder="$(dirname "$0")"
-source "$script_folder/defs.sh"
+source "$(dirname "$0")/defs.sh"
 
 # Main function
 function f() {
   current_root=$F_ROOT_FOLDER
   while [ $# -ne 0 ]; do
-    current_root="$(folder $current_root $1)"
+    current_root="$(__find_folder $current_root $1)"
     if [ -z $current_root ]; then
-      not_found $1
+      echo "Folder '$1' not found"
       exit -1
     fi
     shift
@@ -25,7 +24,7 @@ function f() {
 # $2 -> partial name of folder to be found
 # It tries to find the first folder that matches with $2 using $1 as root folder. If there 
 # isn't any match, returns empty string. Otherwise, returns the full path of the matching folder.
-function folder() {
+function __find_folder() {
   if [ -d "$1/$2" ]; then
     echo "$1/$2"
   else
@@ -43,9 +42,4 @@ function folder() {
       echo ""
     fi
   fi
-}
-
-# Prompt error message
-function not_found() {
-  echo "Project '$1' not found"
 }
