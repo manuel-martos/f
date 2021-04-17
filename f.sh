@@ -8,34 +8,16 @@ source "$script_folder/defs.sh"
 
 # Main function
 function f() {
-  # If no parameters, change to root folder
-  if [ $# -eq 0 ]; then
-    cd $F_ROOT_FOLDER
-  # If one parameter, try to find specified folder
-  elif [ $# -eq 1 ]; then
-    parse_result "$(folder $F_ROOT_FOLDER $1)" $1
-  # If two parameters, first try to find first folder, use it as root and try to find second folder
-  elif [ $# -eq 2 ]; then
-    folder="$(folder $F_ROOT_FOLDER $1)"
-    if [ ! -z $folder ]; then
-      parse_result "$(folder $folder $2)" $2
-    else
+  current_root=$F_ROOT_FOLDER
+  while [ $# -ne 0 ]; do
+    current_root="$(folder $current_root $1)"
+    if [ -z $current_root ]; then
       not_found $1
+      exit -1
     fi
-  # If three parameters, imagine...
-  elif [ $# -eq 3 ]; then
-    folder="$(folder $F_ROOT_FOLDER $1)"
-    if [ ! -z $folder ]; then
-      subfolder="$(folder $folder $2)"
-      if [ ! -z $subfolder ]; then
-        parse_result "$(folder $subfolder $3)" $3
-      else
-        not_found $2
-      fi
-    else
-      not_found $1
-    fi
-  fi
+    shift
+  done
+  cd $current_root
 }
 
 # This function receives two parameters
@@ -60,15 +42,6 @@ function folder() {
     if [ $found = false ]; then
       echo ""
     fi
-  fi
-}
-
-# Simply changes directory or prompts the error message.
-function parse_result() {
-  if [ -d "$1" ]; then
-    cd $1
-  else
-    not_found $2
   fi
 }
 
